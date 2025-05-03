@@ -1,0 +1,130 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+file_path = "D:\\6th Sem\\Machine Learning\\Assignments\\titanic (1).csv"
+df = pd.read_csv(file_path)
+
+#View First Few Columns
+print("First Few columns:")
+print(df.head())
+
+#check for null values
+print("\nMissing values if exists:")
+print(df.isnull().sum())
+
+#handle missing values
+print("\nMissing Values after handeling!")
+# df.fillna(df.median(numeric_only=True),inplace=True)
+# df.fillna(df.mode().iloc[0],inplace=True)
+df.fillna(df.median(numeric_only=True), inplace=True)
+df.fillna(df.mode().iloc[0], inplace=True)
+
+#Check if there are any missing values left
+print("\nMissing values after handling")
+print(df.isnull().sum())
+
+#Verify if DS is completly clean
+if df.isnull().sum().sum()==0:
+    print("no missing Values.")
+else:
+    print("Their are still some missing values left in the DS:")
+
+# 2. Encode categorical variables
+label_encoders = {}
+for col in df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col].astype(str))
+    label_encoders[col] = le  # Store encoders for future use
+
+#Normalize/Standardize numerical data
+scaler =StandardScaler()
+numeric_cols=df.select_dtypes(include=[np.number]).columns
+df[numeric_cols]=scaler.fit_transform(df[numeric_cols])
+
+#Identify and remove duplicate records
+print("\nNumber of Duplicate records:",df.duplicated().sum())
+df.drop_duplicates(inplace=True)
+
+#Exploratory Data Analysis(EDA)
+print("\nDataset Summary:")
+print(df.describe())
+
+#Visualizations
+plt.figure(figsize=(10,5))
+sns.heatmap(df.corr(), annot=True, cmap="coolwarm",fmt=".2f")
+plt.title("Feature Correlation Heatmap")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Importing necessary libraries
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Load the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Creating the SVM classifier
+svm_model = SVC (kernel='linear', C=1.0, random_state=42)
+
+# Training the model
+svm_model.fit(X_train, y_train)
+
+# Making predictions
+y_pred = svm_model.predict(X_test)
+
+# Evaluating the model
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
+
+
+
+
+
+
+
+
+
